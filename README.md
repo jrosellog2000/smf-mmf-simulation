@@ -17,9 +17,9 @@ The simulations are based on:
 # Project Objectives: SMF and MMF Simulation
 
 ## Step 1: Mode shapes only
-- [ ] Visualize SMF Gaussian mode and MMF LP modes (Bessel + cos(l*phi))  
-- [ ] Plot intensity as |E|^2  
-- [ ] Purpose: understand mode shapes and superposition  
+- [x] Visualize SMF Gaussian mode and MMF LP modes (Bessel + cos(l*phi))  
+- [x] Plot intensity as |E|^2  
+- [x] Purpose: understand mode shapes and superposition  
 
 ## Step 2: Include Only Physically Allowed Modes
 - [ ] Compute fiber V-number: V = (2 * pi * a / lambda) * NA  
