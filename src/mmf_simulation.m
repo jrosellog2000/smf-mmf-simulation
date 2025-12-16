@@ -11,27 +11,29 @@ N = 512;        % number of grid points
 L = 100e-6;      % grid size in meters
 x = linspace(-L,L,N);
 y = x;
-[X,Y] = meshgrid(x,y);
-R = sqrt(X.^2 + Y.^2);
+[X,Y] = meshgrid(x,y); % obtaining each coordinate
+R = sqrt(X.^2 + Y.^2); % distance from the centre to each point
+phi = atan2(Y, X); % azimuthal angle for each coordinate
 
-% Example LP modes
-u01 = 2.405;  % LP01 first zero of J01
-u11 = 3.832;  % LP11 first zero of J11
-u21 = 5.136;  % LP21 first zero of J21
-u02 = 5.520;  % LP02 first zero of J02
 
-E01 = besselj(0,u01*R/a).*(R<=a);
-E11 = besselj(1,u11*R/a).*cos(atan2(Y,X)).*(R<=a);
-E21 = besselj(2,u21*R/a).*cos(2*atan2(Y,X)).*(R<=a);
-E02 = besselj(0,u02*R/a).*(R<=a);
+% Using E_lp_modes function to obtain the complex electrical field for each LP mode
+E01 = E_lp_modes(0,1,phi,R,a);
+E11 = E_lp_modes(1,1,phi,R,a);
+E21 = E_lp_modes(2,1,phi,R,a);
+E02 = E_lp_modes(0,2,phi,R,a);
+E31 = E_lp_modes(3,1,phi,R,a);
+E12 = E_lp_modes(1,2,phi,R,a);
+E41 = E_lp_modes(4,1,phi,R,a);
+
 
 % Combine modes
-E_mmf = E01 + 0.1*E11 + 0.5*E21 + 0.3*E02;
+r = rand(1,7);
+E_mmf = r(1)*E01 + r(2)*E11 + r(3)*E21 + r(4)*E31 + r(5)*E12 + r(6)*E02 + r(7)*E41;
 E_mmf = E_mmf/max(abs(E_mmf(:)));
 
 % Plot intensity
 figure;
-imagesc(x*1e6,y*1e6,abs(E_mmf).^2)
+imagesc(x*1e6,y*1e6,abs(E_mmf).^2) % intensity os is E^2
 axis equal tight
 xlabel('µm'); ylabel('µm');
 title('MMF LP Modes');
