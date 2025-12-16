@@ -7,7 +7,7 @@ NA = sqrt(n_core^2 - n_clad^2);   % numerical aperture
 V = 2*pi*a/lambda*NA;             % normalized frequency
 
 N = 512;        % number of grid points
-L = 20e-6;      % grid size in meters
+L = 7e-6;      % grid size in meters
 x = linspace(-L,L,N);
 y = x;
 [X,Y] = meshgrid(x,y);
