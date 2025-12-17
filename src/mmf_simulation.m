@@ -94,27 +94,43 @@ N_modes = length(allowed_modes);
 coeffs = 2*rand(1, N_modes) - 1;   % uniform in [-1, 1]
 E_total = 0;
 
-for k = 1:N_modes
+figure;
+for zi = 1:Nz
+    z = z_vals(zi);
+    E_total_z = 0;
 
-    % Extract u_lm from modes array
-    name = allowed_modes{k};
-    l_val = str2double(name(2));
-    m_val = str2double(name(3));
-    u_val = modes(modes(:,1)==l_val & modes(:,2)==m_val,3);
+    for k = 1:N_modes
+        % Extract l and m from the field name
+        name = allowed_modes{k};
+        l_val = str2double(name(2));
+        m_val = str2double(name(3));
+        u_val = modes(modes(:,1)==l_val & modes(:,2)==m_val,3);
 
-    % Effective index approximation
-    n_eff = n_core * (1 - (u_val/V)^2 / 2);
+        % Effective index approximation
+        n_eff = n_core * (1 - (u_val/V)^2 / 2);
 
-    % Propagation constant
-    beta_lm = k0 * n_eff;
+        % Propagation constant
+        beta_lm = k0 * n_eff;
 
-    % Add mode with propagation phase
-    E_total = E_total + coeffs(k) * E_struct.(allowed_modes{k}) * exp(1i * beta_lm * L_fiber);
+        % Add mode with propagation phase
+        E_total_z = E_total_z + coeffs(k) * E_struct.(name) * exp(1i * beta_lm * z);
+    end
 
+    % Normalize
+    E_total_z = E_total_z / max(abs(E_total_z(:)));
+
+    % Plot intensity
+    imagesc(x*1e6, y*1e6, abs(E_total_z).^2);
+    axis equal tight;
+    colormap hot;
+    xlabel('µm'); ylabel('µm');
+    title(['MMF intensity evolution at z = ' num2str(z*1e3,'%.2f') ' mm']);
+    colorbar;
+    drawnow;
+
+    % Optional: pause to slow down the animation
+    pause(0.05);
 end
-
-% Normalize
-E_total = E_total / max(abs(E_total(:)));
 
 % -----------------------------
 % Display allowed modes
@@ -136,15 +152,3 @@ for k = 1:N_modes
     u_val = modes(modes(:,1)==l_val & modes(:,2)==m_val,3);
     fprintf(' %2d  %2d   %7.4f\n', l_val, m_val, u_val);
 end
-
-% -----------------------------
-% Plot intensity
-% -----------------------------
-figure;
-imagesc(x*1e6,y*1e6,abs(E_total).^2)
-axis equal tight
-xlabel('µm'); ylabel('µm');
-title('MMF random superposition of LP modes');
-colorbar;
-
-
