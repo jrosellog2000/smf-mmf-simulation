@@ -15,6 +15,11 @@ y = x;
 R = sqrt(X.^2 + Y.^2); 
 phi = atan2(Y, X); 
 
+k0 = 2*pi/lambda;  % free-space wavenumber
+L_fiber = 0.1;          % fiber length in meters
+Nz = 100;               % number of z steps for animation
+z_vals = linspace(0, L_fiber, Nz);
+
 % Matrix of Bessel zeros (rows: l, cols: m)
 L_max = 10;   % maximum l
 M_max = 10;   % maximum m 
@@ -90,7 +95,22 @@ coeffs = 2*rand(1, N_modes) - 1;   % uniform in [-1, 1]
 E_total = 0;
 
 for k = 1:N_modes
-    E_total = E_total + coeffs(k) * E_struct.(allowed_modes{k});
+
+    % Extract u_lm from modes array
+    name = allowed_modes{k};
+    l_val = str2double(name(2));
+    m_val = str2double(name(3));
+    u_val = modes(modes(:,1)==l_val & modes(:,2)==m_val,3);
+
+    % Effective index approximation
+    n_eff = n_core * (1 - (u_val/V)^2 / 2);
+
+    % Propagation constant
+    beta_lm = k0 * n_eff;
+
+    % Add mode with propagation phase
+    E_total = E_total + coeffs(k) * E_struct.(allowed_modes{k}) * exp(1i * beta_lm * L_fiber);
+
 end
 
 % Normalize
