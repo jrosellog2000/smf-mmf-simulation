@@ -22,9 +22,9 @@ The simulations are based on:
 - [x] Purpose: understand mode shapes and superposition  
 
 ## Step 2: Include Only Physically Allowed Modes
-- [ ] Compute fiber V-number: V = (2 * pi * a / lambda) * NA  
-- [ ] Include only modes with u_lm <= V  
-- [ ] Purpose: reflect which modes the fiber can physically support  
+- [x] Compute fiber V-number: V = (2 * pi * a / lambda) * NA  
+- [x] Include only modes with u_lm <= V  
+- [x] Purpose: reflect which modes the fiber can physically support  
 
 ## Step 3: Normalize and Weight Modes
 - [ ] Assign amplitude coefficients c_lm based on input beam (centered, offset, tilted)  
