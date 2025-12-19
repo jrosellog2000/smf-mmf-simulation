@@ -1,6 +1,6 @@
 
 lambda = 1.55e-6;       % wavelength in meters
-a = 25e-6;              % core radius in meters
+a = 15e-6;              % core radius in meters
 n_core = 1.450;         
 n_clad = 1.444;         
 
@@ -8,7 +8,7 @@ NA = sqrt(n_core^2 - n_clad^2);   % numerical aperture
 V = 2*pi*a/lambda*NA;             % normalized frequency
 
 N = 512;        % number of grid points
-L = 50e-6;      % grid size in meters
+L = 30e-6;      % grid size in meters
 x = linspace(-L,L,N);
 y = x;
 [X,Y] = meshgrid(x,y); 
@@ -20,7 +20,33 @@ L_fiber = 0.1;          % fiber length in meters
 Nz = 100;               % number of z steps for animation
 z_vals = linspace(0, L_fiber, Nz);
 
+%% -----------------------------
+% Realistic laser input field
+%% -----------------------------
+
+w0 = 0.7*a;                     % beam waist (not perfectly matched)
+x0 = 0.2*a*(2*rand-1);          % random lateral offset
+y0 = 0.2*a*(2*rand-1);
+theta_x = 0.05*(2*rand-1);      % small angular tilt
+theta_y = 0.05*(2*rand-1);
+
+% Ideal Gaussian envelope
+E_gauss = exp(-((X-x0).^2 + (Y-y0).^2)/w0^2);
+
+% Phase distortions (real laser imperfections)
+phase_noise = 0.3 * randn(size(X));        % wavefront roughness
+tilt_phase  = k0*(theta_x*X + theta_y*Y);  % angular misalignment
+
+% Final realistic laser field
+E_in = E_gauss .* exp(1i*(phase_noise + tilt_phase));
+
+% Normalize input power
+E_in = E_in / sqrt(sum(abs(E_in(:)).^2));
+
+%% -----------------------------
 % Matrix of Bessel zeros (rows: l, cols: m)
+%% -----------------------------
+
 L_max = 10;   % maximum l
 M_max = 10;   % maximum m 
 
@@ -87,11 +113,24 @@ for k = 1:size(modes,1)
 end
 
 
-% -----------------------------
-% Random combination
-% -----------------------------
+%% -----------------------------
+% Mode excitation via overlap integrals
+%% -----------------------------
+
 N_modes = length(allowed_modes);
-coeffs = 2*rand(1, N_modes) - 1;   % uniform in [-1, 1]
+
+coeffs = zeros(1, N_modes);
+dx = x(2) - x(1);
+dy = y(2) - y(1);
+
+for k = 1:N_modes
+    E_lm = E_struct.(allowed_modes{k});
+    coeffs(k) = sum(E_in .* conj(E_lm), 'all') * dx * dy;
+end
+
+% Normalize total launched power
+coeffs = coeffs / sqrt(sum(abs(coeffs).^2));
+
 E_total = 0;
 
 figure;
@@ -117,7 +156,9 @@ for zi = 1:Nz
     end
 
     % Normalize
-    E_total_z = E_total_z / max(abs(E_total_z(:)));
+    P = sum(abs(E_total_z(:)).^2);
+    E_total_z = E_total_z / sqrt(P);
+
 
     % Plot intensity
     imagesc(x*1e6, y*1e6, abs(E_total_z).^2);

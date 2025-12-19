@@ -27,10 +27,10 @@ The simulations are based on:
 - [x] Purpose: reflect which modes the fiber can physically support  
 
 ## Step 3: Normalize and Weight Modes
-- [ ] Assign amplitude coefficients c_lm based on input beam (centered, offset, tilted)  
-- [ ] Normalize each mode to unit maximum or unit power  
-- [ ] Purpose: realistic mode excitation  
-- [ ] Effect: the mode superposition resembles real excitation  
+- [x] Assign amplitude coefficients c_lm based on input beam (centered, offset, tilted)  
+- [x] Normalize each mode to unit maximum or unit power  
+- [x] Purpose: realistic mode excitation  
+- [x] Effect: the mode superposition resembles real excitation  
 
 ## Step 4: Include Propagation Phase (beta)
 - [x] Each mode propagates along z: E_lm(r,phi,z) = E_lm(r,phi) * exp(i * beta_lm * z)  
