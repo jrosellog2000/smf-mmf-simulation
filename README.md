@@ -35,8 +35,8 @@ The simulations are based on:
 ## Step 4: Include Propagation Phase (beta)
 - [x] Each mode propagates along z: E_lm(r,phi,z) = E_lm(r,phi) * exp(i * beta_lm * z)  
 - [x] Compute beta_lm approximately as k0 * n_eff  
-- [x] Sum modes at each z to get interference pattern  
-- [x] Purpose: visualize changing speckle along fiber length  
+- [] Sum modes at each z to get interference pattern  
+- [] Purpose: visualize changing speckle along fiber length  
 
 ## Step 5: Include Cladding / Evanescent Field
 - [ ] Replace the mask (R <= a) with proper cladding solution using modified Bessel functions  
